@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Men's Day</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"
+    />
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #dbdbdb;
+        font-family: Arial, sans-serif;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        opacity: 0; /* Start with body hidden */
+        animation: fadeInBody 2s forwards; /* Fade in body */
+      }
+
+      @keyframes fadeInBody {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      #wrapper {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        max-width: 800px;
+        width: 90%;
+        position: relative;
+        z-index: 2;
+        opacity: 0; /* Start with wrapper hidden */
+        animation: fadeInWrapper 2s 1s forwards; /* Delay the fade in */
+      }
+
+      @keyframes fadeInWrapper {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      #wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        width: 300px;
+        height: auto;
+        opacity: 0; /* Start with image hidden */
+        animation: fadeInImage 2s 2s forwards; /* Delay the image fade in */
+      }
+
+      @keyframes fadeInImage {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      #content {
+        padding: 20px;
+        text-align: left;
+        flex: 1;
+        opacity: 0; /* Start with text hidden */
+        animation: fadeInText 2s 1s forwards; /* Delay the text fade in */
+      }
+
+      @keyframes fadeInText {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      #content h1 {
+        font-size: 2rem;
+        color: #222;
+        margin-bottom: 10px;
+      }
+
+      #content p {
+        font-size: 1.1rem;
+        color: #555;
+      }
+
+      #confettiCanvas {
+        background-color: #222;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1; /* Ensures confetti is behind the content */
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="confettiCanvas"></canvas>
+
+    <div id="wrapper">
+      <!-- Image on the left -->
+      <img src="./v.jpg" alt="Happy Men's Day Image" />
+
+      <!-- Text on the right -->
+      <div id="content">
+        <h1>Happy Men's Day</h1>
+        <p>
+            Let's take a moment to celebrate the strength, courage, and care of
+            men worldwide. A day to acknowledge the positive contributions made by
+            men in our lives and society!
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("confettiCanvas");
+      const ctx = canvas.getContext("2d");
+      const colors = ["#FF3F8E", "#04C2C9", "#2E55C1", "#F9D423"];
+      let particles = [];
+      let mousePos = { x: 0, y: 0 };
+
+      class Particle {
+        constructor(x, y, size, color, speedX, speedY) {
+          this.x = x;
+          this.y = y;
+          this.size = size;
+          this.color = color;
+          this.speedX = speedX;
+          this.speedY = speedY;
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.size *= 0.98; // Shrink over time
+        }
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function createExplosion(x, y) {
+        const particleCount = 50;
+        for (let i = 0; i < particleCount; i++) {
+          const size = Math.random() * 5 + 2;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const speedX = (Math.random() * 2 - 1) * 2;
+          const speedY = (Math.random() * 2 - 1) * 2;
+          particles.push(new Particle(x, y, size, color, speedX, speedY));
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = particles.filter((particle) => {
+          particle.update();
+          particle.draw();
+          return particle.size > 0.5;
+        });
+        requestAnimationFrame(animate);
+      }
+
+      function handleMouseMove(event) {
+        mousePos.x = event.clientX;
+        mousePos.y = event.clientY;
+      }
+
+      // Initialize
+      resizeCanvas();
+      animate();
+
+      // Event listeners
+      window.addEventListener("resize", resizeCanvas);
+      canvas.addEventListener("mousemove", handleMouseMove);
+
+      // Create explosions at intervals
+      setInterval(() => {
+        createExplosion(mousePos.x, mousePos.y);
+      }, 50);
+    </script>
+  </body>
+</html>
